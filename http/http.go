@@ -1,6 +1,6 @@
 // httpspy provides a http client that outputs raw http to stdout. Also makes the underlying net.Client implementation
 // available.
-package httpspy
+package http
 
 import (
 	"crypto/tls"
