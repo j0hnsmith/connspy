@@ -1,11 +1,13 @@
-package http
+package http_test
 
 import (
 	"io/ioutil"
+
+	"github.com/j0hnsmith/connspy/http"
 )
 
 func ExampleNewClient() {
-	client := connspy.NewClient(nil, nil)
+	client := http.NewClient(nil, nil)
 
 	resp, _ := client.Get("http://example.com/")
 	// ensure all of the body is read

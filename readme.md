@@ -1,6 +1,10 @@
-# httpspy
+# connspy
 
-A `http.Client` suitable for debugging, it outputs all http data to stdout.
+Tools for spying on connections, all output read/written to stderr 
+
+### `http` package 
+
+A `http.Client` suitable for debugging, writes all http data to stdout.
 
 ```go
 client := httpspy.NewClient(nil, nil)
@@ -17,11 +21,13 @@ resp.Body.Close()
 
 ![http output to stderr](https://dl.dropboxusercontent.com/s/ved2xxrp3rbzome/Screen%20Shot%202017-11-02%20at%2022.48.35.png?dl=0)
 
-Also provides `SpyConnection`, a `net.Conn` implementation which outputs all reads and writes to stderr.
+### `net` package
+
+Provides a `net.Conn` wrapper that writes all reads/writes to stderr.
 
 ## Docs
 
-[https://godoc.org/github.com/j0hnsmith/httpspy](https://godoc.org/github.com/j0hnsmith/httpspy)
+[https://godoc.org/github.com/j0hnsmith/connspy](https://godoc.org/github.com/j0hnsmith/connspy)
 
 ## Background info
 

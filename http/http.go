@@ -1,4 +1,4 @@
-// httpspy provides a http client that outputs raw http to stdout. Also makes the underlying net.Client implementation
+// http provides a http client that outputs raw http to stdout. Also makes the underlying net.Client implementation
 // available.
 package http
 
@@ -6,13 +6,14 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	"io"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
 	"time"
+
+	spy "github.com/j0hnsmith/connspy/net"
 )
 
 // NewClient returns a http.Client that will output all http data to stdout. The client has various default timeouts,
@@ -35,13 +36,13 @@ func NewClient(dialer *net.Dialer, transport *http.Transport) *http.Client {
 	}
 
 	dial := func(network, address string) (net.Conn, error) {
-		conn, err := dialer.Dial(network, address)
+		c, err := dialer.Dial(network, address)
 		if err != nil {
 			return nil, err
 		}
 
 		fmt.Fprint(os.Stderr, fmt.Sprintf("\n%s\n\n", strings.Repeat("-", 80)))
-		return &SpyConnection{conn}, nil // return a wrapped net.Conn
+		return spy.WrapConnection(c), nil
 	}
 
 	dialTLS := func(network, address string) (net.Conn, error) {
@@ -85,7 +86,7 @@ func NewClient(dialer *net.Dialer, transport *http.Transport) *http.Client {
 		}
 
 		fmt.Fprint(os.Stderr, fmt.Sprintf("\n%s\n\n", strings.Repeat("-", 80)))
-		return &SpyConnection{tlsConn}, nil // return a wrapped net.Conn
+		return spy.WrapConnection(tlsConn), nil
 	}
 
 	transport.Dial = dial
@@ -96,23 +97,4 @@ func NewClient(dialer *net.Dialer, transport *http.Transport) *http.Client {
 	}
 
 	return timeoutClient
-}
-
-// SpyConnection wraps a net.Conn, all reads and writes are output to stderr
-type SpyConnection struct {
-	net.Conn
-}
-
-// Read writes all data read from the underlying connection to stderr
-func (sc *SpyConnection) Read(b []byte) (int, error) {
-	tr := io.TeeReader(sc.Conn, os.Stderr)
-	br, err := tr.Read(b)
-	return br, err
-}
-
-// Write writes all data written to the underlying connection to stderr
-func (sc *SpyConnection) Write(b []byte) (int, error) {
-	mw := io.MultiWriter(sc.Conn, os.Stderr)
-	bw, err := mw.Write(b)
-	return bw, err
 }
