@@ -27,7 +27,7 @@ Provides a `net.Conn` wrapper that writes all reads/writes to stderr.
 
 ## Docs
 
-[https://godoc.org/github.com/j0hnsmith/connspy](https://godoc.org/github.com/j0hnsmith/connspy)
+[![GoDoc](https://godoc.org/github.com/j0hnsmith/connspy?status.svg)](https://godoc.org/github.com/j0hnsmith/connspy) 
 
 ## Background info
 
