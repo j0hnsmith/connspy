@@ -42,7 +42,7 @@ func NewClient(dialer *net.Dialer, transport *http.Transport) *http.Client {
 		}
 
 		fmt.Fprint(os.Stderr, fmt.Sprintf("\n%s\n\n", strings.Repeat("-", 80)))
-		return spy.WrapConnection(c), nil
+		return spy.WrapConnection(c, os.Stderr), nil
 	}
 
 	dialTLS := func(network, address string) (net.Conn, error) {
@@ -86,7 +86,7 @@ func NewClient(dialer *net.Dialer, transport *http.Transport) *http.Client {
 		}
 
 		fmt.Fprint(os.Stderr, fmt.Sprintf("\n%s\n\n", strings.Repeat("-", 80)))
-		return spy.WrapConnection(tlsConn), nil
+		return spy.WrapConnection(tlsConn, os.Stderr), nil
 	}
 
 	transport.Dial = dial
