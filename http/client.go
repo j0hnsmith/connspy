@@ -1,5 +1,4 @@
-// http provides a http client that outputs raw http to stdout. Also makes the underlying net.Client implementation
-// available.
+// http provides a http client that outputs raw http to stdout.
 package http
 
 import (
