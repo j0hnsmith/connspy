@@ -7,7 +7,7 @@ Tools for spying on connections, all output read/written to stderr
 A `http.Client` suitable for debugging, writes all http data to stdout.
 
 ```go
-client := httpspy.NewClient(nil, nil)
+client := connspy.NewClient(nil, nil)
 
 resp, _ := client.Get("http://example.com/")
 // ensure all of the body is read
