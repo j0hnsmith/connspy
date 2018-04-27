@@ -19,7 +19,7 @@ ioutil.ReadAll(resp.Body)
 resp.Body.Close()
 ```
 
-![http output to stderr](https://dl.dropboxusercontent.com/s/ved2xxrp3rbzome/Screen%20Shot%202017-11-02%20at%2022.48.35.png?dl=0)
+![http output to stderr](https://cdn-images-1.medium.com/max/1600/1*H8Yjf-3rVTBo2ByjDasriA.png)
 
 ### `net` package
 
