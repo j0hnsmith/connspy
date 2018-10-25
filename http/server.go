@@ -11,7 +11,7 @@ import (
 
 type SpyServer struct {
 	http.Server
-	wc func() (io.WriteCloser, error)
+	getWriterForConn func() (io.WriteCloser, error)
 }
 
 // ListenAndServe is similar to the net.http Server equivalent, no tcp keep-alive though.
@@ -24,7 +24,7 @@ func (ss *SpyServer) ListenAndServe() error {
 	if err != nil {
 		return err
 	}
-	spyLn := spynet.WrapListener(ln, ss.wc)
+	spyLn := spynet.WrapListener(ln, ss.getWriterForConn)
 	return ss.Serve(spyLn)
 }
 
