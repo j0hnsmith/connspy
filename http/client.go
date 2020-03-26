@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"net/url"
@@ -15,9 +16,23 @@ import (
 	spy "github.com/j0hnsmith/connspy/net"
 )
 
-// NewClient returns a http.Client that will output all http data to stdout. The client has various default timeouts,
-// call with nil values to use them, otherwise pass arguments to customise.
+// NewClient returns a http.Client that will output all http data to stderr.
+// The client has various default timeouts, call with nil values to use them, otherwise pass arguments to customise.
 func NewClient(dialer *net.Dialer, transport *http.Transport) *http.Client {
+	client := clientToWriter(dialer, transport, os.Stderr)
+
+	return client
+}
+
+// NewClientWriter returns a http.Client that will output all http data to a given io.Writer
+// The client has various default timeouts, call with nil values to use them, otherwise pass arguments to customise.
+func NewClientWriter(dialer *net.Dialer, transport *http.Transport, writer io.Writer) *http.Client {
+	client := clientToWriter(dialer, transport, writer)
+
+	return client
+}
+
+func clientToWriter(dialer *net.Dialer, transport *http.Transport, writer io.Writer) *http.Client {
 	if dialer == nil {
 		dialer = &net.Dialer{
 			Timeout:   30 * time.Second,
@@ -40,8 +55,8 @@ func NewClient(dialer *net.Dialer, transport *http.Transport) *http.Client {
 			return nil, err
 		}
 
-		fmt.Fprint(os.Stderr, fmt.Sprintf("\n%s\n\n", strings.Repeat("-", 80)))
-		return spy.WrapConnection(c, os.Stderr), nil
+		fmt.Fprint(writer, fmt.Sprintf("\n%s\n\n", strings.Repeat("-", 80)))
+		return spy.WrapConnection(c, writer), nil
 	}
 
 	dialTLS := func(network, address string) (net.Conn, error) {
@@ -84,8 +99,8 @@ func NewClient(dialer *net.Dialer, transport *http.Transport) *http.Client {
 			}
 		}
 
-		fmt.Fprint(os.Stderr, fmt.Sprintf("\n%s\n\n", strings.Repeat("-", 80)))
-		return spy.WrapConnection(tlsConn, os.Stderr), nil
+		fmt.Fprint(writer, fmt.Sprintf("\n%s\n\n", strings.Repeat("-", 80)))
+		return spy.WrapConnection(tlsConn, writer), nil
 	}
 
 	transport.Dial = dial
